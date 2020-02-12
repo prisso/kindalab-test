@@ -8,8 +8,7 @@ import com.rissopablo.app.Interfaces.Observer;
 import com.rissopablo.app.Interfaces.Securitable;
 
 public class Building implements Observer {
-    
-    public static final int NUMBER_OF_ELEVATORS = 2;
+
     public static final int NUMBER_OF_FLOORS = 50;
     public static final int NUMBER_OF_BASEMENTS = 1;
 
@@ -26,7 +25,7 @@ public class Building implements Observer {
         
         freightControl = new ElevatorControlSystem(NUMBER_OF_FLOORS,
                 NUMBER_OF_BASEMENTS);
-        Elevator freight = new Elevator(3000, freightControl);
+        Elevator freight = new Elevator(ElevatorType.FREIGHT, freightControl);
         freightControl.setElevator(freight);
 
         ArrayList<Integer> securedFloors = new ArrayList<>();
@@ -35,7 +34,7 @@ public class Building implements Observer {
         ElevatorSecuritySystem security = new ElevatorSecuritySystem(securedFloors);
         publicControl = new ElevatorControlSystem(NUMBER_OF_FLOORS, 
                 NUMBER_OF_BASEMENTS);
-        SecuritableElevator publicE = new SecuritableElevator(1000, ElevatorType.PUBLIC, 
+        SecuritableElevator publicE = new SecuritableElevator(ElevatorType.PUBLIC,
                 publicControl, security);
         publicControl.setElevator((Elevator)publicE);
         
@@ -64,7 +63,6 @@ public class Building implements Observer {
                 personsOnFloors.add((Person)o);
                 publicControl.callElevatorFromFloor(o.currentFloor);
             } else {
-                System.out.println("Adding new packet in floor: " + o.currentFloor);
                 packetsOnFloors.add((Packet)o);
                 freightControl.callElevatorFromFloor(o.currentFloor);
             }

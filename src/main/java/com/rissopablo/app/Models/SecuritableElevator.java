@@ -18,9 +18,9 @@ public class SecuritableElevator extends Elevator {
     
     private final ElevatorSecuritySystem securitySystem;
     
-    public SecuritableElevator(int maxWeight, ElevatorType type, 
+    public SecuritableElevator(ElevatorType type,
             ElevatorControlSystem control, ElevatorSecuritySystem security) {
-        super(maxWeight, type, control);
+        super(type, control);
         this.securitySystem = security;
     }
 

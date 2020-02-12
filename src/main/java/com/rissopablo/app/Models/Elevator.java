@@ -3,7 +3,6 @@ package com.rissopablo.app.Models;
 import com.rissopablo.app.Controllers.ElevatorControlSystem;
 import java.util.ArrayList;
 
-
 public class Elevator {
 
     public int maxWeight;
@@ -15,17 +14,11 @@ public class Elevator {
     protected ArrayList<Object> objects;
     protected ElevatorControlSystem control;
     
-    public Elevator(int maxWeight, ElevatorType type, ElevatorControlSystem control) {
-        
-        this.maxWeight = maxWeight;
-        this.type = type;
+    public Elevator(ElevatorType type, ElevatorControlSystem control) {
+
+        this.maxWeight = type.value();
         this.objects = new ArrayList<>();
         this.control = control;
-    }
-    
-    public Elevator(int maxWeight, ElevatorControlSystem control) {
-        
-        this(maxWeight, ElevatorType.FREIGHT, control);
     }
 
     public ArrayList<Object> openDoor(ArrayList<Object> newObjects) {

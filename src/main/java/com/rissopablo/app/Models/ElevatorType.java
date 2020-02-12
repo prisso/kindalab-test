@@ -11,8 +11,17 @@ package com.rissopablo.app.Models;
  */
 
 public enum ElevatorType {
-	PUBLIC,
-	FREIGHT,
-        NOT_DEF
+	PUBLIC (1000),
+	FREIGHT(3000),
+	NOT_DEF (-1);
+
+	private final int maxWeight;
+	ElevatorType(int max) {
+		this.maxWeight = max;
+	}
+
+	public int value() {
+		return maxWeight;
+	}
 }
 
