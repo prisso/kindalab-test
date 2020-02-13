@@ -72,6 +72,14 @@ public class Building implements Observer {
     
     @Override
     public void update(Elevator elevator, int floor) {
+        if (elevator.type == ElevatorType.PUBLIC) {
+            presenter.setPublicFloor(floor);
+        } else {
+            presenter.setFreightFloor(floor);
+        }
+        if (elevator.willNotOpenDoor())
+            return;
+
         ArrayList<Object> objsToIn = new ArrayList<>();
         int index = 0;
         if (elevator.type == ElevatorType.PUBLIC) {
@@ -101,11 +109,7 @@ public class Building implements Observer {
         
         if (couldntEnter != null && !couldntEnter.isEmpty()) {
             for (Object obj : couldntEnter) {
-                if (obj instanceof Securitable) {
-                    personsOnFloors.add((Person)obj);
-                } else {
-                    packetsOnFloors.add((Packet)obj);
-                }
+                addNewObject(obj);
             }
         }
     }

@@ -25,7 +25,6 @@ public class BuildingPresenter implements ActionListener {
     public BuildingPresenter() {
         view = new BuildingView(this);
         building = new Building(this);
-        
     }
 
     @Override

@@ -7,7 +7,8 @@ public class Elevator {
 
     public int maxWeight;
     public int currentWeight = 0;
-    public int currentFloor = 0;
+    public int targetFloor = 0;
+    public int currentFloor;
     public boolean isShutOff = false;
     public ElevatorType type;
     
@@ -19,6 +20,10 @@ public class Elevator {
         this.maxWeight = type.value();
         this.objects = new ArrayList<>();
         this.control = control;
+    }
+
+    public boolean willNotOpenDoor() {
+        return targetFloor != currentFloor;
     }
 
     public ArrayList<Object> openDoor(ArrayList<Object> newObjects) {
@@ -60,12 +65,12 @@ public class Elevator {
 
     protected void removeObjects() {
         int index = 0;
-        System.out.println("Leaving objects at floor: " + currentFloor);
         do {
             Object o = objects.get(index);
-            if (o.targetFloor != currentFloor) {
+            if (o.targetFloor != targetFloor) {
                 index++;
             } else {
+                System.out.println("Leaving objects at floor: " + targetFloor);
                 currentWeight -= o.weight;
                 objects.remove(o);
             }

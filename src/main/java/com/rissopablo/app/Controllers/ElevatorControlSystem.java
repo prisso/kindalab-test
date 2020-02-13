@@ -12,8 +12,6 @@ import com.rissopablo.app.Models.Elevator;
 import com.rissopablo.app.Models.ElevatorType;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -23,7 +21,7 @@ public class ElevatorControlSystem implements Runnable, Observable {
     
     private final int numberOfFloors;
     private final int numberOfBasements;
-    
+
     private Thread thread;
     private Elevator elevator;
     private Direction direction = Direction.STILL;
@@ -76,69 +74,92 @@ public class ElevatorControlSystem implements Runnable, Observable {
         direction = Direction.STILL; 
     }
 
-    private void moveElevatorTo(int newFloor) {
-        System.out.println("Moving elevator from floor: " + currentFloor);
+    private void moveElevatorFrom(int cFloor, int newFloor) {
+        System.out.println("Moving elevator from floor: " + cFloor);
         System.out.println("Moving elevator to floor: " + newFloor);
 
-        int interFloor = ( direction == Direction.UP ) ? ++currentFloor : --currentFloor;
-        while(interFloor != newFloor) {
-            if (floorsToGo.get(interFloor) == Boolean.TRUE)
-                moveElevatorTo(interFloor);
+        elevator.targetFloor = newFloor;
 
+        int nextFloor = cFloor;
+        int interFloor = cFloor;
+        do {
+            interFloor = getNextFloor(nextFloor);
             if (direction == Direction.UP)
-                interFloor++;
-            else if (direction == Direction.DOWN)
-                interFloor--;
-
-            //Emulate time to get the target floor
+                nextFloor++;
+            if (direction == Direction.DOWN)
+                nextFloor--;
             try {
-                Thread.sleep(250);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(ElevatorControlSystem.class.getName()).log(Level.SEVERE, null, ex);
+                thread.sleep(500);
+                notifyObservers(nextFloor);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }
-        if (elevator.isShutOff)
-            return;
+        } while (nextFloor != newFloor);
 
         currentFloor = newFloor;
         elevator.currentFloor = newFloor;
         floorsToGo.put(newFloor, Boolean.FALSE);
-        notifyObservers();
+        notifyObservers(newFloor);
     }
-    
-    private int getNextFloor() {
-        int floorToGo = currentFloor;
-        boolean isWaiting;
-        do {
-            if (direction == Direction.UP)
-                floorToGo += 1;
-            else if (direction == Direction.DOWN)
-                floorToGo -= 1;
 
-            if (floorToGo >= numberOfFloors) {
-                direction = Direction.DOWN;
-                floorToGo -= 1;
-            } else if (floorToGo < -1*numberOfBasements){
+    private int getNextFloor(int cFloor) {
+        int nextFloor = cFloor;
+        if (direction == Direction.DOWN) {
+            nextFloor = checkFloorsDown(cFloor);
+            if (nextFloor >= -1*numberOfBasements)
+                return nextFloor;
+            nextFloor = checkFloorsUp(cFloor);
+            if (nextFloor < numberOfFloors) {
                 direction = Direction.UP;
-                floorToGo += 1;
+                return nextFloor;
             }
-            isWaiting = floorsToGo.get(floorToGo);
-        } while (!isWaiting && !elevator.isShutOff);
-        if (isWaiting)
-            return floorToGo;
-        else
-            return numberOfBasements+numberOfFloors;
+            nextFloor = cFloor;
+        }
+
+        if (direction == Direction.UP) {
+            nextFloor = checkFloorsUp(cFloor);
+            if (nextFloor < numberOfFloors)
+                return nextFloor;
+            nextFloor = checkFloorsDown(cFloor);
+            if (nextFloor >= -1*numberOfBasements) {
+                direction = Direction.DOWN;
+                return nextFloor;
+            }
+            nextFloor = cFloor;
+        }
+
+        return nextFloor;
+    }
+
+    private int checkFloorsDown(int cFloor) {
+        int nextFloor = cFloor - 1;
+        while (nextFloor >= -1 * numberOfBasements && !floorsToGo.get(nextFloor)) {
+            nextFloor -= 1;
+        }
+        return nextFloor;
+    }
+
+    private int checkFloorsUp(int cFloor) {
+        int nextFloor = cFloor + 1;
+        while (nextFloor < numberOfFloors && !floorsToGo.get(nextFloor)) {
+            nextFloor += 1;
+        }
+        return nextFloor;
     }
     
     @Override
     public void run() {
-        while (!elevator.isShutOff) {
-            int nextFloor = getNextFloor();
-            if (nextFloor != numberOfBasements+numberOfFloors) {
-               moveElevatorTo(nextFloor);
-            }
+        int currFloor, toFloor = getNextFloor(currentFloor);
+        moveElevatorFrom(currentFloor, toFloor);
+        while (!elevator.isShutOff && direction != Direction.STILL) {
+            currFloor = toFloor;
+            toFloor = getNextFloor(currFloor);
+            if (toFloor == currFloor)
+                direction = Direction.STILL;
+            else
+                moveElevatorFrom(currFloor, toFloor);
         }
-        direction = Direction.STILL;
+        System.out.println("Elevator has stopped!");
         thread = null;
     }
 
@@ -155,8 +176,8 @@ public class ElevatorControlSystem implements Runnable, Observable {
     }
 
     @Override
-    public void notifyObservers() {
+    public void notifyObservers(int floor) {
         for (Observer obs : observers)
-            obs.update(this.elevator, currentFloor);
+            obs.update(this.elevator, floor);
     }
 }

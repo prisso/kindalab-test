@@ -23,6 +23,6 @@ public interface Observable {
     /**
      *
      */
-    public void notifyObservers();
+    public void notifyObservers(int f);
     
 }
