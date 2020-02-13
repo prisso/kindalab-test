@@ -44,7 +44,6 @@ public class Elevator {
                 objects.add(o);
                 currentWeight += o.weight;
                 System.out.println("Current weight: " + currentWeight + ", Max: " + maxWeight);
-                System.out.println("Leaving packet at floor: " + o.targetFloor);
                 control.callElevatorFromFloor(o.targetFloor);
                 index++;
             }
@@ -61,6 +60,7 @@ public class Elevator {
 
     protected void removeObjects() {
         int index = 0;
+        System.out.println("Leaving objects at floor: " + currentFloor);
         do {
             Object o = objects.get(index);
             if (o.targetFloor != currentFloor) {

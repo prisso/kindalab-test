@@ -77,12 +77,29 @@ public class ElevatorControlSystem implements Runnable, Observable {
     }
 
     private void moveElevatorTo(int newFloor) {
-       //Emulate time to get the target floor
-        try {
-            Thread.sleep(250*(Math.abs(currentFloor-newFloor)+1));
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ElevatorControlSystem.class.getName()).log(Level.SEVERE, null, ex);
+        System.out.println("Moving elevator from floor: " + currentFloor);
+        System.out.println("Moving elevator to floor: " + newFloor);
+
+        int interFloor = ( direction == Direction.UP ) ? ++currentFloor : --currentFloor;
+        while(interFloor != newFloor) {
+            if (floorsToGo.get(interFloor) == Boolean.TRUE)
+                moveElevatorTo(interFloor);
+
+            if (direction == Direction.UP)
+                interFloor++;
+            else if (direction == Direction.DOWN)
+                interFloor--;
+
+            //Emulate time to get the target floor
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ElevatorControlSystem.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+        if (elevator.isShutOff)
+            return;
+
         currentFloor = newFloor;
         elevator.currentFloor = newFloor;
         floorsToGo.put(newFloor, Boolean.FALSE);
@@ -105,7 +122,6 @@ public class ElevatorControlSystem implements Runnable, Observable {
                 direction = Direction.UP;
                 floorToGo += 1;
             }
-            //System.out.println("Floor to GO: " + floorToGo);
             isWaiting = floorsToGo.get(floorToGo);
         } while (!isWaiting && !elevator.isShutOff);
         if (isWaiting)
@@ -118,8 +134,6 @@ public class ElevatorControlSystem implements Runnable, Observable {
     public void run() {
         while (!elevator.isShutOff) {
             int nextFloor = getNextFloor();
-            System.out.println("Moving elevator from floor: " + currentFloor);
-            System.out.println("Moving elevator to floor: " + nextFloor);
             if (nextFloor != numberOfBasements+numberOfFloors) {
                moveElevatorTo(nextFloor);
             }

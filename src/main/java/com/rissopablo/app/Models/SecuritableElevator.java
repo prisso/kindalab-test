@@ -49,7 +49,6 @@ public class SecuritableElevator extends Elevator {
             } else {
                 objects.add(o);
                 System.out.println("Current weight: " + currentWeight + ", Max: " + maxWeight);
-                System.out.println("Leaving person at floor: " + o.targetFloor);
                 control.callElevatorFromFloor(o.targetFloor);
                 index++;
             }
