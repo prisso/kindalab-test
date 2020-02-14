@@ -63,6 +63,7 @@ public class Building implements Observer {
                 personsOnFloors.add((Person)o);
                 publicControl.callElevatorFromFloor(o.currentFloor);
             } else {
+                System.out.println("Adding a new packet ...");
                 packetsOnFloors.add((Packet)o);
                 freightControl.callElevatorFromFloor(o.currentFloor);
             }

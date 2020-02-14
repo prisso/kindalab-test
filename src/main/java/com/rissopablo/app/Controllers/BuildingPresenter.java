@@ -25,6 +25,11 @@ public class BuildingPresenter implements ActionListener {
     public BuildingPresenter() {
         view = new BuildingView(this);
         building = new Building(this);
+/*
+        Packet p1 = new Packet(200, 30, 40);
+        building.addNewObject(p1);
+        Packet p2 = new Packet(300, 20, 39);
+        building.addNewObject(p2);*/
     }
 
     @Override

@@ -81,15 +81,21 @@ public class ElevatorControlSystem implements Runnable, Observable {
         elevator.targetFloor = newFloor;
 
         int nextFloor = cFloor;
-        int interFloor = cFloor;
+        int interFloor = 0;
         do {
             interFloor = getNextFloor(nextFloor);
+            System.out.println("InterFloor: " + interFloor + ", newFloor: " + newFloor);
+            if (newFloor != interFloor) {
+                System.out.println("newFloor != interFloor");
+                moveElevatorFrom(nextFloor, interFloor);
+                nextFloor = interFloor;
+            }
             if (direction == Direction.UP)
                 nextFloor++;
             if (direction == Direction.DOWN)
                 nextFloor--;
             try {
-                thread.sleep(500);
+                Thread.sleep(1000);
                 notifyObservers(nextFloor);
             } catch (InterruptedException e) {
                 e.printStackTrace();
