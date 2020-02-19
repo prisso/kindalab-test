@@ -84,9 +84,7 @@ public class ElevatorControlSystem implements Runnable, Observable {
         int interFloor = 0;
         do {
             interFloor = getNextFloor(nextFloor);
-            System.out.println("InterFloor: " + interFloor + ", newFloor: " + newFloor);
             if (newFloor != interFloor) {
-                System.out.println("newFloor != interFloor");
                 moveElevatorFrom(nextFloor, interFloor);
                 nextFloor = interFloor;
             }

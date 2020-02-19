@@ -18,6 +18,7 @@ public class Elevator {
     public Elevator(ElevatorType type, ElevatorControlSystem control) {
 
         this.maxWeight = type.value();
+        this.type = type;
         this.objects = new ArrayList<>();
         this.control = control;
     }
