@@ -98,7 +98,7 @@ public class ElevatorControlSystem implements Runnable, Observable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        } while (nextFloor != newFloor);
+        } while (nextFloor != newFloor && !elevator.isShutOff);
 
         currentFloor = newFloor;
         elevator.currentFloor = newFloor;

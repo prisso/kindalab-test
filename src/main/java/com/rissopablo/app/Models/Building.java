@@ -84,7 +84,6 @@ public class Building implements Observer {
         ArrayList<Object> objsToIn = new ArrayList<>();
         int index = 0;
         if (elevator.type == ElevatorType.PUBLIC) {
-            presenter.setPublicFloor(floor);
             while(!personsOnFloors.isEmpty() && index < personsOnFloors.size()) {
                 Person p = personsOnFloors.get(index);
                 if (p.currentFloor == floor) {
@@ -95,7 +94,6 @@ public class Building implements Observer {
                 }
             }
         } else {
-            presenter.setFreightFloor(floor);
             while(!packetsOnFloors.isEmpty() && index < packetsOnFloors.size()) {
                 Packet p = packetsOnFloors.get(index);
                 if (p.currentFloor == floor) {
